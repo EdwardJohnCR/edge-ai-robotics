@@ -2,8 +2,8 @@
 #include <WiFi.h>
 
 // Reemplaza con los datos de tu red Wi-Fi
-const char* ssid = "Alquiler";
-const char* password = "ALQUILER001";
+const char* ssid = "redwifi";
+const char* password = "superclavesegura";
 
 // Pin del Flash LED integrado
 #define FLASH_LED_PIN 4

@@ -1,0 +1,45 @@
+Calibración y Mapeo de Brazo Robótico (Arduino UNO) 🤖
+Este repositorio contiene el código de calibración y control manual para un brazo robótico de 4 grados de libertad (DOF). Es una herramienta esencial para realizar el mapeo de límites físicos y la captura de coordenadas precisas antes de implementar secuencias de movimiento automatizadas o agentes de IA.
+
+📌 Descripción del Proyecto
+El sistema permite comandar cada articulación individualmente a través del Monitor Serie del IDE de Arduino. Al mover los ejes, el sistema devuelve un vector de posición formateado que puede ser copiado directamente en scripts de automatización.
+
+⚙️ Requisitos de Hardware
+Controlador: Arduino UNO (o compatible).
+Actuadores: 4 Servomotores (Base, Hombro, Codo, Pinza).
+Alimentación: Se recomienda una fuente externa de 5V/6V para los servos, compartiendo tierra (GND) con el Arduino.
+Conexiones de los Servos (Pinout)
+Articulación	Pin Arduino	Comando Serial
+Base	9	B
+Hombro	7	H
+Codo	6	C
+Pinza	5	P
+🚀 Configuración del Entorno
+Para interactuar con el brazo, sigue estos pasos en el Arduino IDE:
+
+Subir el código: Carga el archivo .ino a tu placa.
+Abrir Monitor Serie: Icono de la lupa en la esquina superior derecha.
+Velocidad: Configura a 115200 baudios.
+Salto de línea: Selecciona "Ambos NL y CR" o "Nueva línea".
+🎮 Instrucciones de Uso
+1. Comandos de Movimiento
+Escribe la letra del servo seguida del ángulo deseado (0-180) y presiona Enter.
+
+B45 -> Mueve la Base a 45 grados.
+P110 -> Mueve la Pinza a 110 grados.
+H90 -> Mueve el Hombro a 90 grados (posición central).
+2. Mapeo de Límites
+Para evitar daños en el acrílico o sobrecalentamiento de los servos:
+
+Mueve el eje de 5 en 5 grados (ej: H90, H95, H100).
+Identifica el punto donde el mecanismo topa físicamente o el servo empieza a zumbar.
+Anota ese valor como el límite mínimo/máximo de tu código final.
+3. Creación de Posiciones (Keyframes)
+Mueve los servos hasta que el brazo esté en la pose deseada (ej: "Posición de Agarre"). El monitor serie imprimirá automáticamente: Coordenada actual: <45,100,60,90>
+
+Puedes copiar estos vectores para definir tus rutinas de Home, Pick y Place de manera exacta.
+
+🛠️ Estructura del Código
+setup(): Inicializa los servos en una posición de seguridad (90°) y abre la comunicación serial a alta velocidad.
+loop(): Escucha la entrada serial, procesa el comando (letra + número) y actualiza la posición del servo correspondiente.
+Seguridad: El código incluye un filtro para ignorar ángulos fuera del rango 0-180 y limpia el buffer en caso de entradas inválidas.
