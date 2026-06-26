@@ -17,10 +17,10 @@ void setup() {
   // Asegúrate de que el Monitor Serie esté en 115200 baudios
   Serial.begin(115200); 
   
-  servoBase.attach(9);
-  servoHombro.attach(7);
-  servoCodo.attach(6);
-  servoPinza.attach(5);
+  servoBase.attach(6);
+  servoHombro.attach(5);
+  servoCodo.attach(9);
+  servoPinza.attach(7);
 
   // Ir a la posición de inicio
   servoBase.write(posB);

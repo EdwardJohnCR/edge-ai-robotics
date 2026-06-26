@@ -37,7 +37,7 @@ WiFiServer serverCmd(81);
 // --- TAREA INDEPENDIENTE PARA EL LED (Se ejecuta en el Núcleo 0) ---
 void tareaControlLED(void * pvParameters) {
   serverCmd.begin();
-  for(;;) { // Bucle infinito de la tarea
+  for(;;) {// Bucle infinito de la tarea 
     WiFiClient client = serverCmd.available();
     if (client) {
       String request = "";
@@ -46,13 +46,17 @@ void tareaControlLED(void * pvParameters) {
           char c = client.read();
           request += c;
           if (c == '\n') {
+             // Control Digital Puro (Cero ruido armónico)
              if (request.indexOf("GET /led_on") >= 0) {
-                digitalWrite(FLASH_LED_PIN, HIGH);
+                digitalWrite(FLASH_LED_PIN, HIGH); 
              } 
              else if (request.indexOf("GET /led_off") >= 0) {
                 digitalWrite(FLASH_LED_PIN, LOW);
              }
-             // Responder a la Raspberry Pi y cerrar la conexión
+             else if (request.indexOf("GET /ping") >= 0) {
+                // Endpoint para la gráfica de latencia
+             }
+             
              client.println("HTTP/1.1 200 OK\r\n\r\nOK");
              break;
           }
@@ -60,14 +64,17 @@ void tareaControlLED(void * pvParameters) {
       }
       client.stop();
     }
-    vTaskDelay(10 / portTICK_PERIOD_MS); // Pequeña pausa para no saturar el núcleo
+    // Pequeña pausa para no saturar el núcleo
+    vTaskDelay(10 / portTICK_PERIOD_MS); 
   }
 }
 
 void setup() {
   Serial.begin(115200);
+  
+  // Configuración digital clásica para el LED
   pinMode(FLASH_LED_PIN, OUTPUT);
-  digitalWrite(FLASH_LED_PIN, LOW);
+  digitalWrite(FLASH_LED_PIN, LOW); 
 
   camera_config_t config;
   config.ledc_channel = LEDC_CHANNEL_0;
@@ -87,19 +94,13 @@ void setup() {
   config.fb_count = 1;
 
   esp_camera_init(&config);
-  
-  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS)) {
-    Serial.println("Fallo al configurar la IP (STA)");
-  }
-  
+  WiFi.config(local_IP, gateway, subnet, primaryDNS);
   WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500); Serial.print(".");
-  }
   
-  // INICIAMOS LA TAREA DEL LED EN EL NÚCLEO 0
+  while (WiFi.status() != WL_CONNECTED) { delay(500); }
+  
+    // INICIAMOS LA TAREA DEL LED EN EL NÚCLEO 0
   xTaskCreatePinnedToCore(tareaControlLED, "ControlLED", 4096, NULL, 1, NULL, 0);
-
   serverVideo.begin();
 }
 
@@ -116,7 +117,7 @@ void loop() {
             client.println("HTTP/1.1 200 OK");
             client.println("Content-Type: multipart/x-mixed-replace; boundary=frame\r\n");
             
-            while (client.connected()) { // Este es el bucle que atrapaba a la cámara
+            while (client.connected()) { 
               camera_fb_t * fb = esp_camera_fb_get();
               if (!fb) continue;
               client.print("--frame\r\nContent-Type: image/jpeg\r\nContent-Length: ");
