@@ -6,9 +6,9 @@ Servo servoCodo;
 Servo servoPinza;
 
 const int PIN_BASE = 9;
-const int PIN_HOMBRO = 10;
-const int PIN_CODO = 11;
-const int PIN_PINZA = 12;
+const int PIN_HOMBRO = 7;
+const int PIN_CODO = 6;
+const int PIN_PINZA = 5;
 
 // Posición inicial de reposo 1 (Tus coordenadas seguras)
 int posActual[4] = {100, 160, 90, 90}; 
